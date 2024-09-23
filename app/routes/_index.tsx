@@ -1,5 +1,6 @@
 import type { MetaFunction } from "@remix-run/node";
-
+import { BreadcrumbsItem } from "../components/Breadcrumbs/BreadcrumbsItem";
+import { Breadcrumbs } from "~/components/Breadcrumbs/Breadcrumbs";
 export const meta: MetaFunction = () => {
   return [
     { title: "New Remix App" },
@@ -7,9 +8,14 @@ export const meta: MetaFunction = () => {
   ];
 };
 
+export const handle = {
+  breadcrumb: () => <BreadcrumbsItem href="/">Home</BreadcrumbsItem>,
+};
+
 export default function Index() {
   return (
     <div className="font-sans p-4">
+      <Breadcrumbs />
       <h1 className="text-3xl">Welcome to Remix</h1>
       <ul className="list-disc mt-4 pl-6 space-y-2">
         <li>
