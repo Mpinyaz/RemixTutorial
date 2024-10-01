@@ -4,15 +4,15 @@ import Navbar from "~/components/NavBar/Navbar";
 import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
-  return [{ title: "Contact Us" }];
+  return [{ title: "Products" }];
 };
 export const handle = {
   breadcrumb: () => (
-    <BreadcrumbsItem href="/contacts">Contacts</BreadcrumbsItem>
+    <BreadcrumbsItem href="/products">Contacts</BreadcrumbsItem>
   ),
 };
 
-export default function Contacts() {
+export default function Products() {
   return (
     <>
       <Navbar />
