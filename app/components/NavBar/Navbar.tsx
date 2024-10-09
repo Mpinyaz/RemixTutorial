@@ -1,6 +1,6 @@
 import { NavigationLink } from "./Navigation-link";
 import type { OutletContext } from "~/types";
-import { useOutletContext, Form } from "@remix-run/react";
+import { useOutletContext } from "@remix-run/react";
 
 const Navbar = () => {
   const { session } = useOutletContext<OutletContext>();
@@ -36,16 +36,10 @@ const Navbar = () => {
           </NavigationLink>
         </div>
         {session?.user ? (
-          <Form
-            className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
-            action="/signout"
-            method="post"
-          >
-            <button type="submit">Sign Out</button>
-          </Form>
+          <div>{"Hello User"}</div>
         ) : (
           <NavigationLink
-            to="/signin"
+            to="signin"
             className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
           >
             {"Sign In"}

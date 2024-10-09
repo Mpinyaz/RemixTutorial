@@ -9,7 +9,7 @@
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "migrate-dev": "npx prisma migrate dev && npx tsx utils/seedTriggers.ts"
+    "migrate-dev": "npx prisma migrate dev && npx tsx lib/seedTriggers.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",
@@ -20,15 +20,11 @@
     "@supabase/ssr": "^0.5.1",
     "@supabase/supabase-js": "^2.45.4",
     "cva": "^1.0.0-beta.1",
-    "dotenv": "^16.4.5",
     "isbot": "^4.1.0",
-    "postgres": "^3.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-hot-toast": "^2.4.1",
     "reacticons": "^0.0.1",
-    "tailwind-merge": "^2.5.2",
-    "tsx": "^4.19.1"
+    "tailwind-merge": "^2.5.2"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.11.2",

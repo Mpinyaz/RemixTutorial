@@ -46,8 +46,6 @@ export const getSession = async (request: Request) => {
 };
 export const isUserLoggedIn = async (request: Request) => {
   const { supabase } = createSupabaseServerClient(request);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return !!user;
+  const sessionResponse = await supabase.auth.getSession();
+  return !!sessionResponse;
 };

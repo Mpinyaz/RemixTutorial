@@ -3,19 +3,19 @@ import {
   type LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
-import { Form, json, useActionData } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
 import {
   isUserLoggedIn,
   signInWithPassword,
 } from "~/utils/auth.supabase.server";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  if (!(await isUserLoggedIn(request))) {
-    throw redirect("/dashboard");
+  if (await isUserLoggedIn(request)) {
+    throw redirect("/user");
   }
-  return json();
+  return null;
 };
 export async function action({ request }: ActionFunctionArgs) {
-  const error = await signInWithPassword(request, "/");
+  const error = await signInWithPassword(request, "/user");
   return error;
 }
 
