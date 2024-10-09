@@ -27,7 +27,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return redirect("/");
+    throw redirect("/");
   }
   return new Response("...", {
     headers,
