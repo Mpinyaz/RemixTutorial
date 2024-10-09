@@ -31,26 +31,27 @@ enum AccountStatus {
 
 model Profile {
         id String @id @db.Uuid
-        username String @unique
+        fullname String? @db.Text
+        username String? @unique
         userEmail String?
         bio String? @db.Text
         role Role @default(USER)
         status AccountStatus @default(ACTIVE)
         avatarUrl String?
+        createdAt DateTime @default(now())
         updatedAt DateTime @updatedAt
         user User @relation(fields: [id],references:[id], onDelete: Cascade, onUpdate: Cascade)
 
         @@map("profiles")
         @@schema("public")
         @@index([username])
-        @@index[[userEmail]]
+        @@index([userEmail])
 }
 
 
-model User {
-        id String @id @map("id") @db.Uuid
-        emailVerified DateTime?
-        profile Profile?
-        @@map("users")
-        @@schema("auth")
-}
+ model User {
+         id String @id @map("id") @db.Uuid
+         profile Profile?
+         @@map("users")
+         @@schema("auth")
+ }
