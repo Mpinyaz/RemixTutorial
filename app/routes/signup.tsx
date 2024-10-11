@@ -5,7 +5,7 @@ import {
   json,
   type MetaFunction,
 } from "@remix-run/node";
-import { Link, useActionData, Form } from "@remix-run/react";
+import { Link, useActionData, Form, useNavigate } from "@remix-run/react";
 import { createSupabaseServerClient } from "~/utils/supabase.server";
 import { getErrorMessage } from "~/utils/errormsg";
 import { toast } from "react-hot-toast";
@@ -49,10 +49,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     if (error) {
       throw error;
     }
-    return json<ActionData>(
-      { success: "A verification link has been sent to your email" },
-      { status: 200 }
-    );
+    return json<ActionData>({ success: "Sign Up registered" });
   } catch (error) {
     return json<ActionData>(
       {
@@ -66,12 +63,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function SignUp() {
   const actionData = useActionData<typeof action>();
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (actionData?.success) {
       toast.success("A verification link has been sent to your email");
-      throw redirect("/");
+      navigate("/");
     }
-  }, [actionData]);
+  }, [actionData, navigate]);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
@@ -84,18 +83,12 @@ export default function SignUp() {
             </div>
           )}
 
-          {actionData && typeof actionData.success === "string" && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
-              {actionData.success}
-            </div>
-          )}
-
           <div>
             <label
               htmlFor="fullname"
               className="block text-sm font-medium text-gray-700"
             >
-              Full Name
+              Preferred Name
             </label>
             <input
               type="text"

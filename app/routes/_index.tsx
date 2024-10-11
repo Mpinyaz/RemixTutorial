@@ -1,12 +1,7 @@
-import {
-  redirect,
-  type LoaderFunctionArgs,
-  type MetaFunction,
-} from "@remix-run/node";
+import { type MetaFunction } from "@remix-run/node";
 import { BreadcrumbsItem } from "../components/Breadcrumbs/BreadcrumbsItem";
 import { Breadcrumbs } from "~/components/Breadcrumbs/Breadcrumbs";
 import Navbar from "~/components/NavBar/Navbar";
-import { createSupabaseServerClient } from "~/utils/supabase.server";
 export const meta: MetaFunction = () => {
   return [
     { title: "Cross Gain Studios" },
@@ -17,7 +12,7 @@ export const meta: MetaFunction = () => {
 export const handle = {
   breadcrumb: () => <BreadcrumbsItem href="/">Home</BreadcrumbsItem>,
 };
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader() {
   const headers = new Headers();
 
   return new Response("...", {

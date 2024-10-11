@@ -14,6 +14,7 @@ import { json } from "@remix-run/node";
 import { useState, useEffect } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { getSession } from "./utils/auth.supabase.server";
+import { Toaster } from "react-hot-toast";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const env = {
@@ -47,6 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster position="bottom-right" toastOptions={{ duration: 5000 }} />
         <ScrollRestoration />
         <Scripts />
       </body>

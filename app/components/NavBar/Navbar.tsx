@@ -35,22 +35,24 @@ const Navbar = () => {
             {"About"}
           </NavigationLink>
         </div>
-        {session?.user ? (
-          <Form
-            className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
-            action="/signout"
-            method="post"
-          >
-            <button type="submit">Sign Out</button>
-          </Form>
-        ) : (
-          <NavigationLink
-            to="/signin"
-            className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
-          >
-            {"Sign In"}
-          </NavigationLink>
-        )}
+        <div>
+          {session?.user ? (
+            <Form
+              className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
+              action="/signout"
+              method="post"
+            >
+              <button type="submit">Sign Out</button>
+            </Form>
+          ) : (
+            <NavigationLink
+              to="/signin"
+              className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
+            >
+              {"Sign In"}
+            </NavigationLink>
+          )}
+        </div>
       </nav>
     </div>
   );
