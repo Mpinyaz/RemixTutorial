@@ -1,20 +1,48 @@
-import type { ActionFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
-import { createSupabaseServerClient } from "~/utils/supabase.server";
-export const loader = async ({ request }: ActionFunctionArgs) => {
-  const url = new URL(request.url);
-  const code = url.searchParams.get("code");
+import { redirect, type LoaderFunctionArgs } from "@remix-run/node";
+import {
+  createServerClient,
+  parseCookieHeader,
+  serializeCookieHeader,
+} from "@supabase/ssr";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const requestUrl = new URL(request.url);
+  const code = requestUrl.searchParams.get("code");
+  const next = requestUrl.searchParams.get("next") || "/";
+  const headers = new Headers();
+
   if (code) {
-    const { supabase, headers } = createSupabaseServerClient(request);
+    const cookies = parseCookieHeader(request.headers.get("Cookie") ?? "");
+    const supabase = createServerClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookies;
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              headers.append(
+                "Set-Cookie",
+                serializeCookieHeader(name, value, options)
+              )
+            );
+          },
+        },
+      }
+    );
+
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (error) {
-      return redirect("/signin");
+    console.log(error?.message);
+
+    if (!error) {
+      return redirect(next, { headers });
+    } else {
+      console.error("Error exchanging code for session", error);
     }
-    return redirect("/dashboard", {
-      headers,
-    });
   }
-  return new Response("Authentication failed", {
-    status: 400,
-  });
-};
+
+  // return the user to an error page with instructions
+  return redirect("/auth/auth-code-error", { headers });
+}

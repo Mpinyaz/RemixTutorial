@@ -24,7 +24,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { headers } = createSupabaseServerClient(request);
   const session = await getSession(request);
 
-  return json({ env, session }, { headers: headers });
+  return json({ env, session, headers });
 };
 export function Layout({ children }: { children: React.ReactNode }) {
   return (

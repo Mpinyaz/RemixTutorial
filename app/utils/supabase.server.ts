@@ -24,6 +24,7 @@ export const createSupabaseServerClient = (request: Request) => {
           );
         },
       },
+      // cookieOptions: { httpOnly: true, secure: true, sameSite: "strict" },
     }
   );
 

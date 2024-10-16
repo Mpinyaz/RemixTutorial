@@ -10,6 +10,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return redirect("/");
   }
   await supabase.auth.signOut();
+
   return redirect("/", {
     headers,
   });

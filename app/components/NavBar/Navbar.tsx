@@ -1,9 +1,22 @@
 import { NavigationLink } from "./Navigation-link";
 import type { OutletContext } from "~/types";
-import { useOutletContext, Form } from "@remix-run/react";
+import { useOutletContext, useNavigate } from "@remix-run/react";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
-  const { session } = useOutletContext<OutletContext>();
+  const { session, supabase } = useOutletContext<OutletContext>();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    // Redirect or refresh the page after sign out
+    if (error) {
+      toast.error(error.message);
+      return;
+    } else {
+      navigate("/");
+    }
+  };
   return (
     <div className="sticky top-0 inset-x-0 bg-black pb-4 px-4 pt-1">
       <nav className="flex justify-between items-center">
@@ -11,7 +24,6 @@ const Navbar = () => {
           to="/"
           className="font-semibold font-suse text-lg text-orange-500"
         >
-          {" "}
           Cross Grain Studios
         </NavigationLink>
         <div className="flex gap-x-4">
@@ -19,7 +31,6 @@ const Navbar = () => {
             to="/products"
             className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
           >
-            {" "}
             Products
           </NavigationLink>
           <NavigationLink
@@ -37,13 +48,12 @@ const Navbar = () => {
         </div>
         <div>
           {session?.user ? (
-            <Form
+            <button
               className="hover:animate-pulse font-semibold font-suse text-lg text-orange-500"
-              action="/signout"
-              method="post"
+              onClick={handleSignOut}
             >
-              <button type="submit">Sign Out</button>
-            </Form>
+              Sign Out, {session.user.email}
+            </button>
           ) : (
             <NavigationLink
               to="/signin"

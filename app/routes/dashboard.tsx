@@ -3,10 +3,10 @@ import {
   type LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
-import { Link, Outlet } from "@remix-run/react";
+import { json, Link, Outlet } from "@remix-run/react";
 import { BreadcrumbsItem } from "../components/Breadcrumbs/BreadcrumbsItem";
-import { createSupabaseServerClient } from "~/utils/supabase.server";
 import { Breadcrumbs } from "~/components/Breadcrumbs/Breadcrumbs";
+import { getUser } from "~/utils/auth.supabase.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -21,17 +21,11 @@ export const handle = {
   ),
 };
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const headers = new Headers();
-  const { supabase } = createSupabaseServerClient(request);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser(request);
   if (!user) {
-    throw redirect("/");
+    return redirect("/");
   }
-  return new Response("...", {
-    headers,
-  });
+  return json(user);
 };
 
 export default function Index() {

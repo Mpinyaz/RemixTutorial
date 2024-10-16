@@ -22,7 +22,6 @@ export async function loader() {
 export default function Index() {
   return (
     <>
-      {" "}
       <div className="font-suse">
         <Navbar />
         <Breadcrumbs />
