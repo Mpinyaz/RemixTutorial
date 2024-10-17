@@ -1,45 +1,29 @@
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-  json,
-  type MetaFunction,
-} from "@remix-run/node";
-import { Link, useActionData, Form, useNavigate } from "@remix-run/react";
-import { createSupabaseServerClient } from "~/utils/supabase.server";
-import { getErrorMessage } from "~/utils/errormsg";
+import { Link, useNavigate, useOutletContext } from "@remix-run/react";
 import { toast } from "react-hot-toast";
-import { useEffect } from "react";
-import { isUserLoggedIn } from "~/utils/auth.supabase.server";
+import React, { useRef } from "react";
+import { OutletContext } from "~/types";
 
-type ActionData =
-  | { success: string } // When sign-up is successful
-  | { success: boolean; error: string };
-export const meta: MetaFunction = () => {
-  return [{ title: "Create an account" }];
-};
+export default function SignUp() {
+  const navigate = useNavigate();
+  const { supabase } = useOutletContext<OutletContext>();
+  const inputForm = useRef<HTMLFormElement>(null);
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  if (await isUserLoggedIn(request)) {
-    throw redirect("/");
-  }
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent the default form submission behavior
 
-  return null;
-};
+    if (!inputForm.current) return;
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await request.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const fullName = formData.get("fullname") as string;
-  const { supabase } = createSupabaseServerClient(request);
+    const formData = new FormData(inputForm.current);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const fullName = formData.get("fullname") as string;
 
-  try {
-    const { error } = await supabase.auth.signUp({
+    // Supabase sign up logic
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: "http://localhost:5173/auth/callback",
+        emailRedirectTo: "http://localhost:5173/auth/credentials",
         data: {
           fullname: fullName,
         },
@@ -47,42 +31,26 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     });
 
     if (error) {
-      throw error;
+      toast.error("Error signing up: " + error.message);
+      return;
     }
-    return json<ActionData>({ success: "Sign Up registered" });
-  } catch (error) {
-    return json<ActionData>(
-      {
-        success: false,
-        error: getErrorMessage(error) || "An error occurred during signup.",
-      },
-      { status: 400 }
-    );
-  }
-};
 
-export default function SignUp() {
-  const actionData = useActionData<typeof action>();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (actionData?.success) {
+    if (data) {
       toast.success("A verification link has been sent to your email");
-      navigate("/");
+      navigate("/"); // Navigate to homepage or a success page
     }
-  }, [actionData, navigate]);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <h1 className="text-2xl font-bold mb-6 text-center">Create Account</h1>
 
-        <Form method="post" className="space-y-4">
-          {actionData && actionData.success === false && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-              {actionData.error}
-            </div>
-          )}
-
+        <form
+          ref={inputForm}
+          onSubmit={handleLogin} // Call handleLogin on form submission
+          className="space-y-4"
+        >
           <div>
             <label
               htmlFor="fullname"
@@ -140,7 +108,7 @@ export default function SignUp() {
           >
             Sign Up
           </button>
-        </Form>
+        </form>
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}

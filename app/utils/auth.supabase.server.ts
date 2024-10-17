@@ -1,28 +1,6 @@
 import { json, redirect } from "@remix-run/react";
 import { createSupabaseServerClient } from "./supabase.server";
 
-export const signInWithGoogle = async (
-  request: Request,
-  successRedirectPath: string = "http://localhost:5173/auth/callback"
-) => {
-  const { supabase, headers } = createSupabaseServerClient(request);
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: successRedirectPath,
-      queryParams: {
-        access_type: "offline",
-        prompt: "consent",
-      },
-    },
-  });
-  return json({
-    ok: !error && data ? true : false,
-    data: data,
-    error: error ? error.message : "Sign In error occurred",
-    headers: headers,
-  });
-};
 export const signInWithPassword = async (
   request: Request,
   credentials: { email: string; password: string },
@@ -34,10 +12,10 @@ export const signInWithPassword = async (
     password: credentials.password,
   });
 
-  if (!error) {
-    throw redirect(successRedirectPath, { headers: headers });
+  if (error) {
+    return json({ error: error.message });
   }
-  return json({ error: error.message });
+  return redirect(successRedirectPath, { headers: headers });
 };
 
 export const signOut = async (

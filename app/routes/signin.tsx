@@ -3,10 +3,10 @@ import {
   type LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, useActionData, useOutletContext } from "@remix-run/react";
+import { OutletContext } from "~/types";
 import {
   isUserLoggedIn,
-  signInWithGoogle,
   signInWithPassword,
 } from "~/utils/auth.supabase.server";
 
@@ -18,25 +18,31 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  const signinMethod = formData.get("signin");
 
-  if (signinMethod === "credentials") {
-    const credentials = {
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    };
-    const error = await signInWithPassword(request, credentials, "/");
-    return error;
-  }
-
-  if (signinMethod === "google") {
-    const response = await signInWithGoogle(request);
-    const { data, headers } = await response.json();
-    return redirect(data.url!, { headers: headers });
-  }
+  const credentials = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
+  const error = await signInWithPassword(request, credentials, "/");
+  return error;
 }
 export default function SignIn() {
   const actionResponse = useActionData<typeof action>();
+  const { supabase } = useOutletContext<OutletContext>();
+  const handleGoogleIn = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+        queryParams: {
+          prompt: "consent",
+        },
+      },
+    });
+    if (error) {
+      console.log(error);
+    }
+  };
   return (
     <>
       <Form method="post">
@@ -49,15 +55,9 @@ export default function SignIn() {
           required
         />
         <br />
-        <button type="submit" name="signin" value="credentials">
-          Sign In
-        </button>
+        <button type="submit">Sign In</button>
       </Form>
-      <Form method="post">
-        <button type="submit" name="signin" value="google">
-          Sign In with Google
-        </button>
-      </Form>
+      <button onClick={handleGoogleIn}>Sign In with Google</button>
     </>
   );
 }
