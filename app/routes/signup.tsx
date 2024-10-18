@@ -129,6 +129,7 @@ export default function SignUp() {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
               placeholder="Your preferred name"
               onChange={handleChange}
+              value={formData.fullname}
             />
             {errors.fullname && (
               <span className="text-sm italic text-red-800">
@@ -151,6 +152,7 @@ export default function SignUp() {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
               placeholder="you@example.com"
               onChange={handleChange}
+              value={formData.email}
             />
             {errors.email && (
               <span className="text-sm italic text-red-800">
@@ -173,6 +175,7 @@ export default function SignUp() {
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
               placeholder="••••••••"
               onChange={handleChange}
+              value={formData.password}
             />
             {errors.password && (
               <span className="text-sm italic text-red-800">

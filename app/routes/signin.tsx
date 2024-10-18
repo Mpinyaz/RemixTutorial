@@ -3,7 +3,7 @@ import {
   type LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
-import { Form, useActionData, useOutletContext } from "@remix-run/react";
+import { Form, Link, useActionData, useOutletContext } from "@remix-run/react";
 import { OutletContext } from "~/types";
 import {
   isUserLoggedIn,
@@ -58,6 +58,9 @@ export default function SignIn() {
         <button type="submit">Sign In</button>
       </Form>
       <button onClick={handleGoogleIn}>Sign In with Google</button>
+      <Link to="/resetpassword">
+        {"Forgot Password?"} <span>Click here to Reset password</span>
+      </Link>
     </>
   );
 }
