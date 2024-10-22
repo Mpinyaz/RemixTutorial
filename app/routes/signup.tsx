@@ -5,11 +5,12 @@ import {
   redirect,
 } from "@remix-run/react";
 import { toast } from "react-hot-toast";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { OutletContext } from "~/types";
 import { z } from "zod";
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import { isUserLoggedIn } from "~/utils/auth.supabase.server";
+import ProgressBar from "~/components/ProgressBar";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (await isUserLoggedIn(request)) {
@@ -20,6 +21,22 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function SignUp() {
   const navigate = useNavigate();
   const { supabase } = useOutletContext<OutletContext>();
+  const [password, setPassword] = useState("");
+  const [strength, setStrength] = useState(0);
+  const calculateStrength = (pwd: string) => {
+    let score = 0;
+    if (pwd.length > 6) score += 1;
+    if (pwd.length > 10) score += 1;
+    if (/[A-Z]/.test(pwd)) score += 1;
+    if (/[0-9]/.test(pwd)) score += 1;
+    if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
+    setStrength(score);
+  };
+  const getStrengthColor = () => {
+    if (strength <= 2) return "#f56565"; // red
+    if (strength <= 4) return "#ecc94b"; // yellow
+    return "#48bb78"; // green
+  };
   const SignUpSchema = z.object({
     fullname: z.string().min(1, "Full name is required"),
     password: z.string().min(6, "Password must have more than 6 characters"),
@@ -82,7 +99,7 @@ export default function SignUp() {
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: "http://localhost:5173/auth/credentials",
+          emailRedirectTo: `${location.origin}/auth/credentials`,
           data: {
             fullname: formData.fullname,
           },
@@ -105,10 +122,16 @@ export default function SignUp() {
     const { name, value } = e.target;
     const updatedFormData = { ...formData, [name]: value };
     setFormData(updatedFormData);
+    if (name == "password") {
+      calculateStrength(value);
+      setPassword(value);
+    }
     const newErrors = validateForm(updatedFormData);
     setErrors(newErrors);
   };
-
+  useEffect(() => {
+    calculateStrength(password);
+  }, [password]);
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
@@ -182,6 +205,18 @@ export default function SignUp() {
                 {errors.password[0]}
               </span>
             )}
+            <div className="display flex justify-center items-center space-x-2 mt-1">
+              <p className="text-sm italic text-nowrap">Password Strength</p>
+              <ProgressBar value={strength * 20} color={getStrengthColor()} />
+            </div>
+            <p className="text-sm text-muted-foreground text-end">
+              {strength === 0 && ""}
+              {strength === 1 && "Weak"}
+              {strength === 2 && "Fair"}
+              {strength === 3 && "Good"}
+              {strength === 4 && "Strong"}
+              {strength === 5 && "Very Strong"}
+            </p>
           </div>
 
           <button
