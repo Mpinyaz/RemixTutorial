@@ -98,21 +98,19 @@ export default function ResetPassword() {
     }
   };
   return (
-    <>
-      <h1 className="font-suse text-orange-600 text-2xl">
-        {isChngPasswd ? "Change" : "Reset"} Password
-      </h1>
-      <Form method="post" className="w-1/2" onSubmit={handleReset}>
-        <fieldset>
-          <legend>{isChngPasswd ? "Change" : "Reset"} Password</legend>
-          <p>
-            Please enter your email address so we can send you the link to{" "}
-            {isChngPasswd ? "change " : "reset "}
-            your password.
-          </p>
-          <div style={{ margin: 5 }}>
-            <label>
-              Email{" "}
+    <div className="flex min-h-screen items-center justify-center bg-black">
+      <div className="w-full max-w-md bg-zinc-500 p-6 rounded-lg shadow-[5px_5px_rgba(255,_255,_255,_0.4),_10px_10px_rgba(255,_255,_255,_0.3),_15px_15px_rgba(255,_255,_255,_0.2),_20px_20px_rgba(255,_255,_255,_0.1),_25px_25px_rgba(255,_255,_255,_0.05)]">
+        <Form method="post" className="w-full" onSubmit={handleReset}>
+          <fieldset>
+            <legend className="text-orange-500 text-2xl font-bold">
+              {isChngPasswd ? "Change" : "Reset"} Password
+            </legend>
+            <p className="p-2 italic font-bold">
+              Please enter your email address so we can send you the link to{" "}
+              {isChngPasswd ? "change " : "reset "}
+              your password.
+            </p>
+            <div style={{ margin: 5 }}>
               <input
                 type="email"
                 name="email"
@@ -120,18 +118,37 @@ export default function ResetPassword() {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={!!loggedInEmail}
+                placeholder="Your Email"
+                className={`w-full px-4 py-3 bg-white/5 border ${
+                  errors.email?.length
+                    ? "border-red-500/50 focus:border-red-500"
+                    : "border-white/10 focus:border-blue-500"
+                } rounded-lg outline-none transition-colors duration-200 text-white placeholder-gray-400
+                    focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed`}
               />
-            </label>
-            {errors.email && <span>{errors.email[0]}</span>}
-          </div>
-          <div style={{ margin: 5 }}>
-            <button type="submit">Reset password</button>
-            <Link style={{ marginLeft: 10 }} to={`/`}>
-              Cancel
-            </Link>
-          </div>
-        </fieldset>
-      </Form>
-    </>
+              {errors.email && (
+                <span className="text-red-600 italic font-bold">
+                  {errors.email[0]}
+                </span>
+              )}
+            </div>
+            <div className="flex justify-between items-center gap-4 pt-2">
+              <button
+                className="flex-1 justify-center py-3 px-6 border border-transparent rounded-lg shadow-sm font-medium text-xl text-white bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                type="submit"
+              >
+                Reset password
+              </button>
+              <Link
+                className="bg-red-500 hover:bg-red-600 rounded-lg hover:text-white py-3 px-6 text-xl font-medium"
+                to={`/`}
+              >
+                Cancel
+              </Link>
+            </div>
+          </fieldset>
+        </Form>
+      </div>
+    </div>
   );
 }
