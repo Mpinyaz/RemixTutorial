@@ -6,7 +6,7 @@ import {
 } from "@remix-run/react";
 import { toast } from "react-hot-toast";
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { OutletContext } from "~/types";
+import { OutletContext, SignUpSchema } from "~/types";
 import { z } from "zod";
 import { type LoaderFunctionArgs } from "@remix-run/node";
 import { isUserLoggedIn } from "~/utils/auth.supabase.server";
@@ -37,11 +37,6 @@ export default function SignUp() {
     if (strength <= 4) return "#ecc94b"; // yellow
     return "#48bb78"; // green
   };
-  const SignUpSchema = z.object({
-    fullname: z.string().min(1, "Full name is required"),
-    password: z.string().min(6, "Password must have more than 6 characters"),
-    email: z.string().trim().email("Invalid email address"),
-  });
 
   type SignUp = z.infer<typeof SignUpSchema>;
   type FormErrors = Partial<Record<keyof SignUp, string[]>>;
