@@ -137,7 +137,6 @@ export default function SignUp() {
         <h1 className="text-2xl font-bold mb-6 text-center text-orange-500">
           Create Account
         </h1>
-
         <form
           onSubmit={handleLogin}
           className="space-y-4 p-3 bg-white rounded-lg"

@@ -1,11 +1,14 @@
 import {
   Links,
   Meta,
-  Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
   useRevalidator,
+  type ErrorResponse,
+  Outlet,
+  isRouteErrorResponse,
+  useRouteError,
 } from "@remix-run/react";
 import "./tailwind.css";
 import type { LoaderFunctionArgs } from "@remix-run/node";
@@ -15,6 +18,7 @@ import { useState, useEffect } from "react";
 import { createBrowserClient } from "@supabase/ssr";
 import { getSession } from "./utils/auth.supabase.server";
 import { Toaster } from "react-hot-toast";
+import NotFound from "./components/NotFound";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const env = {
@@ -78,4 +82,18 @@ export default function App() {
     };
   }, [supabase.auth, serverAccessToken, revalidate]);
   return <Outlet context={{ supabase, session }} />;
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    if (error.status === 404) {
+      return <NotFound />;
+    }
+
+    throw new Error(`${error.status} ${error.statusText}`);
+  }
+
+  throw new Error(error instanceof Error ? error.message : "Unknown Error");
 }
