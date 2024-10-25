@@ -1,7 +1,7 @@
 const NotFound = () => {
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-black text-orange-400 font-suse">
-      <h1 className="font-bold text-5xl animate-in fade-in duration-1000 delay-1000 flex flex-wrap items-center  gap-2 mb-5">
+      <h1 className="font-bold absolute top-10 text-5xl animate-in fade-in duration-1000 delay-1000 flex flex-wrap items-center  gap-2 mb-5">
         <img
           className="rounded-full w-20 h-20"
           src="../../public/remixtut/CROSS GRAIN LOGO abbr.jpg"
